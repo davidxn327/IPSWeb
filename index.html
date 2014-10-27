@@ -1,0 +1,210 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9">
+        <title>智能变电站仿真系统</title>
+        <meta name="description" content="智能变电站仿真系统 by davidxn davkas">
+        <meta name="keyword" content="智能变电站仿真系统 by davidxn davkas">   
+        <link href="./css/jquery.snippet.min.css" rel="stylesheet">
+        <link href="./css/bootstrap.min.css" rel="stylesheet">
+        <link href="./css/editor.css" rel="stylesheet">
+        <script type="text/javascript" src="http://192.168.1.108:3000/socket.io/socket.io.js"></script>
+        <script type="text/javascript" src="./js/jquery-2.1.1.min.js"></script> 
+        <script type="text/javascript" src="./js/jquery.snippet.min.js"></script>
+        <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="./js/jtopo.js"></script>
+        <script type="text/javascript" src="./js/common.js"></script>
+        <script type="text/javascript" src="./js/editor.js"></script>
+        <script type="text/javascript" src="./js/highcharts.src.js"></script>
+        <script type="text/javascript" src="./js/exporting.src.js"></script>
+
+    </head>
+
+    <body>
+        <div class="caption" id="top_">
+            <h3 style="text-align:center; margin-top: 10px;">
+                智能变电站仿真系统
+            </h3>
+        </div>
+        <div>
+            <div class="Editor" style="margin-top: 0px;">
+                <div id="toolbar" class="Toolbar">
+                    <div class="btn-group">
+                        <button class=" btn btn-default btn-sm" title="默认模式" mode="normal" onClick="JavaScript: setModle('normal');" ><img src="style/images/default_icon.png"></button>
+                        <button class=" btn btn-default btn-sm" title="框选模式" mode="select" onClick="JavaScript: setModle('select');" ><img src="style/images/rectangle_selection_icon.png" ></button>
+                        <button class=" btn btn-default btn-sm" title="浏览模式" mode="drag" onClick="JavaScript: setModle('drag');"  ><img src="style/images/pan_icon.png"></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class=" btn btn-default btn-sm" title="放大" onClick="JavaScript: zoomOut();"><img src="style/images/zoomin_icon.png" ></button>
+                        <button class=" btn btn-default btn-sm" title="缩小" onClick="JavaScript: zoomIn();"><img src="style/images/zoomout_icon.png"></button>
+                        <button id="fullScreenButton" class=" btn btn-default btn-sm" title="纵览" onclick="fullScreenButton()"><img src="style/images/overview_icon.png"></button>
+                    </div>
+                    <div class="btn-group">
+                        <button class=" btn btn-default btn-sm" title="清除所有元素" onclick="clearElement();"><img src="style/images/delete.png"></button>
+                        <button class=" btn btn-default btn-sm" title="清除选中元素" onclick="deleteElement();"><img src="style/images/deleteone.png"></button>
+                 <!--        <button class=" btn btn-default btn-sm" title="树形布局"><img src="style/images/view_tree.png"></button> -->
+                    </div>
+                    <div class="btn-group">
+                        <button class=" btn btn-default btn-sm" title="导出图片" id="exportButton">导出图片</button>
+                        <button class=" btn btn-default btn-sm" title="提交拓扑" onclick="SubmitExistedFile();" >提交拓扑</button>
+                    </div>  
+                    <div style="display: inline-block; vertical-align: middle;">
+                        <div class="input-group input-group-sm" style="width: 150px;">            
+                            <input type="text" class="form-control " placeholder="设备名称" id="findText">
+                            <span class="input-group-btn">                    
+                                <button class="btn btn-default btn-sm" type="button" id="findButton">搜索</button>   
+                            </span>            
+                        </div>
+                    </div>
+                    <div style="display: inline-block; vertical-align: middle; width:300px;">
+                        
+                        <div class="input-group input-group-sm">
+                          <span class="input-group-btn">
+                            <!-- <button class="btn btn-default btn-sm" type="button">Go!</button> -->
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" style="margin-right:-1px;">选择文件<span class="caret"></span></button>
+                                <ul class="dropdown-menu" role="menu" id="FileList">
+                                </ul>
+                          </span>
+                          <input type="text" class="form-control" id="choicedFileName" >
+                          <span class="input-group-btn">
+                            <button class="btn btn-default btn-sm" type="button" style="margin-right:-1px;margin-left:-2px" onclick="runTopo()">运行</button>
+                          </span>
+                           <span class="input-group-btn">
+                            <button class="btn btn-default btn-sm" type="button" onclick="deleteFile();" >删除</button>
+                          </span>
+                        </div>
+                    </div>            
+                </div>
+            </div>
+            <div class="Main-Panel" style="background-color: #fff; border: 1px solid  #f8f8f8;">
+                <div id="right" class="right"> 
+                    <div class="title">
+                            <h5 class="headline" style="">设备</h5>
+                        </div>   
+                    <div id="toolbox" class="Toolbox"> 
+                        <div class="toolbox-item" style="dispaly:inline-block;width:60px " >
+                            <img class="img-responsive img-thumbnail" alt="Responsive image" src="./network/images2/mu.png" draggable="true" title="MU" draginfo='{"size":{"width":40},"image":"./network/images2/mu.png","label":"MU"}' ondragstart="drag(event)" >
+                            <div class="caption">
+                                MU
+                            </div>
+                        </div>
+                        <div class="toolbox-item" style="dispaly:inline-block;width:60px " >
+                            <img class="img-responsive img-thumbnail" alt="Responsive image" src="./network/images2/mn.png" draggable="true" title="MN" draginfo='{"size":{"width":40},"image":"./network/images2/mn.png","label":"MN"}' ondragstart="drag(event)">
+                            <div class="caption">
+                                MN
+                            </div>
+                        </div>
+                        <div class="toolbox-item" style="dispaly:inline-block;width:60px " >
+                             <img class="img-responsive img-thumbnail" alt="Responsive image" src="./network/images2/it.png" draggable="true" title="IT" draginfo='{"size":{"width":40},"image":"./network/images2/it.png","label":"IT"}' ondragstart="drag(event)">
+                            <div class="caption">
+                                IT
+                            </div>
+                        </div>
+                        <div class="toolbox-item" style="dispaly:inline-block;width:60px " >
+                            <img class="img-responsive img-thumbnail" alt="Responsive image" src="./network/images2/fc.png" draggable="true" title="FC" draginfo='{"size":{"width":40},"image":"./network/images2/fc.png","label":"FC"}' ondragstart="drag(event)">
+                            <div class="caption">
+                                FC
+                            </div>
+                        </div>
+                        <div class="toolbox-item" style="dispaly:inline-block;width:60px " >
+                             <img class="img-responsive img-thumbnail" alt="Responsive image" src="./network/images2/switch.png" draggable="true" title="Switch" draginfo='{"size":{"width":40},"image":"./network/images2/switch.png","label":"Switch"}' ondragstart="drag(event)">
+                            <div class="caption">
+                                SWITCH
+                            </div>
+                        </div>
+                        <div class="toolbox-item" style="dispaly:inline-block;width:60px " >
+                               <img class="img-responsive img-thumbnail" alt="Responsive image" src="./network/images2/pc.png" draggable="true" title="PC" draginfo='{"size":{"width":40},"image":"./network/images2/pc.png","label":"PC"}' ondragstart="drag(event)">
+                            <div class="caption">
+                                PC
+                            </div>
+                        </div>
+                   <!--      <img class="img-responsive img-thumbnail" alt="Responsive image" src="./img/host.png" draggable="true" title="服务器" draginfo='{"size":{"width":40},"image":"./img/modem.png","label":"服务器"}' ondragstart="drag(event)">
+                   <img class="img-responsive img-thumbnail" alt="Responsive image" src="./network/images2/server2.png" draggable="true" title="文字" draginfo='{"size":{"width":40},"image":"./network/images2/server2.png","label":"文字"}' ondragstart="drag(event)"> -->
+                    </div>
+                    <div id="devinfo" class="devinfo" >
+                        <div class="title">
+                            <h5 class="headline" style="">设备信息</h5>
+                        </div>
+                        <div class="input-group input-group-sm" style="display: none; ">
+                            <span class="input-group-addon cap" >ID</span>
+                            <input type="text" id="info_id" class="form-control">
+                        </div>
+                        <div class="input-group input-group-sm" style="background-color: #fff;">
+                            <span class="input-group-addon cap" >名称</span>
+                            <input type="text" id="info_name" class="form-control">
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon cap" >阈值</span>
+                            <input type="text" id="info_alarmLimit" class="form-control">
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon cap" >速率</span>
+                            <input type="text" id="info_rate" class="form-control">
+                           <span class="input-group-addon">M</span>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon cap" id="vlan">Vlan</span>
+                            <input type="text" id="info_vlan" class="form-control">
+                        </div>
+                        <div class="input-group input-group-sm" >
+                            <span class="input-group-addon cap" >路数</span>
+                            <input type="text" id="info_num" class="form-control">
+                            <span class="input-group-addon">路</span>
+                        </div>
+                        <div class="btn-group btn-group-sm ">
+                            <button type="button" class="btn btn-default btn-primary" style=" margin-top: 10px;margin-bottom:5px " onclick="changeDevInfo();">更改</button>
+                           <!--  <button type="button" class="btn btn-default" onclick="showModal();">状态</button> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="Graph-Panel" ondragover="allowDrop(event)" ondrop="drop(event)"  style="padding-right: 0px;">
+                    <canvas id="canvas"  height="520" width="842" style="background-color: #fff; border: 1px solid  #f8f8f6; cursor: default;">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="ChartModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width:900px;height:400px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="myModalLabel">运行状态图</h4>
+                    </div>
+                    <div class="modal-body" id="chartShowPanel" style="width:800px;height:400px">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="SubmitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="myModalLabel">输入文件名</h4>
+                    </div>
+                    <div class="modal-body" >
+                        <div class="form-group">
+                            <label for="FileName">文件名</label>
+                            <input type="email" class="form-control" id="inPutFileName" placeholder="输入文件名">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SubmitNewFile();">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cover" class="cover">      
+            <div class="spinner">
+                <div class="dot1"></div>
+                <div class="dot2"></div>
+            </div>
+        </div>
+    </body>    
+</html>
