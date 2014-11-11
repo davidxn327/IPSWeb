@@ -38,7 +38,7 @@ io.on('connection', function(socket){
 				}
 
 
-				console.log(json);
+				//console.log(json);
 				socket.emit('open', json);
 			}
 			
@@ -125,7 +125,7 @@ io.on('connection', function(socket){
 				var node = {};
 				node.id = element._id;
 				node.type = element["label"];
-				console.log(node.type);
+				//console.log(node.type);
 				if (node.type == "Switch") {
 					node['Devices'] = [];
 				} else {
@@ -198,7 +198,7 @@ io.on('connection', function(socket){
 			var link = links[i];
 			str += 'Link\t'+link[0]+'\t'+link[1]+'\n';
 		};
-		console.log('ns3 topology: '+str);
+		//console.log('ns3 topology: '+str);
 
 		var dir = 'data/'+proj.name+'/';
 		if (!fs.existsSync(dir)) {
@@ -224,7 +224,7 @@ io.on('connection', function(socket){
 						console.log('run error:'+err);
 						socket.emit('run', 'ERROR');
 					}else {
-						console.log(stdout);
+						//console.log(stdout);
 						//socket.emit('run', 'OK');
 						var file = dir + 'IPS_REPORT.txt';
 						fs.readFile(file, function(err, data){
